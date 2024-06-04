@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import CustomError from "../handler/CustomError";
-import { Program, ProgramSchema } from "../types/schemas";
+import { Program, ProgramSchema } from "../types/programSchema";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();

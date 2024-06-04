@@ -1,12 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
-const catchAsync = (controller: (req: Request, res: Response) => Promise<void>) =>
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      await controller(req, res);
-    } catch (err) {
-      next(err);
-    }
+const catchAsync = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => 
+  (req: Request, res: Response, next: NextFunction) => {
+    fn(req, res, next).catch(next);
   };
 
 export default catchAsync;
