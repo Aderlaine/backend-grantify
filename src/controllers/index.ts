@@ -1,3 +1,4 @@
-import { getAllProgram } from "./program.controller";
+import { getAllProgram, getProgramById } from "./program.controller";
+import { getAllUser } from "./user.controller";
 
-export { getAllProgram };
+export { getAllProgram, getProgramById, getAllUser };

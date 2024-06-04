@@ -24,16 +24,17 @@ model User {
 }
 
 model Program {
-  id        String     @id @default(uuid())
-  title     String
-  openDate  DateTime
-  closeDate DateTime
-  category  String
-  criteria  String
-  image     String
-  link      String
-  uploader  String
-  bookmarks Bookmark[]
+  id          String     @id @default(uuid())
+  title       String
+  openDate    DateTime
+  closeDate   DateTime
+  category    String
+  description String
+  criteria    String
+  image       String
+  link        String
+  uploader    String
+  bookmarks   Bookmark[]
 }
 
 model Bookmark {

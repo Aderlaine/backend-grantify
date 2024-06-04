@@ -7,6 +7,7 @@ const ProgramSchema = z.object({
   closeDate: z.date(), 
   category: z.string(),
   criteria: z.string(),
+  description: z.string(),
   image: z.string(),
   link: z.string(),
   uploader: z.string(),
