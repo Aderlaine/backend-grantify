@@ -1,25 +1,19 @@
-import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import AuthenticationError from "../handler/AuthenticationError";
+import { getUserIdFromToken } from "../utils/getUserIdByToken";
 
-const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
-	const authorizationHeader = req.headers.authorization;
-
-	if (!authorizationHeader || typeof authorizationHeader !== "string") {
-		throw new AuthenticationError("No token provided, please log in");
-	}
-
-	const token = authorizationHeader.split(" ")[1]; // Mengambil token setelah "Bearer"
-
-	if (!token) {
-		throw new AuthenticationError("No token provided, please log in");
-	}
-
+interface AuthRequest extends Request {
+	user?: any; // Sesuaikan dengan tipe data user Anda
+}
+const isLoggedIn = (req: AuthRequest, res: Response, next: NextFunction) => {
 	try {
-		jwt.verify(token, process.env.SECRET_KEY as string);
+		const userId = getUserIdFromToken(req);
+		req.user = { id: userId };
 		next();
 	} catch (error) {
-		throw new AuthenticationError("Token expired, please log in again");
+		throw new AuthenticationError(
+			"Token expired or invalid, please log in again"
+		);
 	}
 };
 
