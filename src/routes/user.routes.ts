@@ -1,14 +1,16 @@
 import express, { Router } from "express";
-import { getAllUser, getProfile, register } from "../controllers";
+import { editUser, getAllUser, getProfile, register } from "../controllers";
 import catchAsync from "../utils/catchAsync";
 import isLoggedIn from "../middleware/isLoggedIn";
 
 const userRoutes: Router = express.Router();
 
-userRoutes.route("/users").get(isLoggedIn, catchAsync(getAllUser));
+userRoutes.route("/users").get(catchAsync(getAllUser));
 
 userRoutes.route("/profile").get(isLoggedIn, getProfile);
 
-userRoutes.route("/register").post(isLoggedIn, catchAsync(register));
+userRoutes.route("/register").post(catchAsync(register));
+
+userRoutes.route("/user/edit").put(catchAsync(editUser));
 
 export default userRoutes;

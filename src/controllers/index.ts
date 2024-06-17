@@ -1,5 +1,5 @@
 import { getAllProgram, getProgramById } from "./program.controller";
-import { getAllUser, register, getProfile } from "./user.controller";
+import { getAllUser, register, getProfile, editUser } from "./user.controller";
 import { login, logout } from "./auth.controller";
 import {
 	createBookmark,
@@ -17,4 +17,5 @@ export {
 	getBookmarks,
 	deleteBookmark,
 	getProfile,
+	editUser,
 };

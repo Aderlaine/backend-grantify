@@ -7,9 +7,7 @@ const bookmark: Router = express.Router();
 
 bookmark.route("/bookmarks").get(isLoggedIn, catchAsync(getBookmarks));
 
-bookmark
-	.route("/bookmark")
-	.post(isLoggedIn, createBookmark)
-	.delete(isLoggedIn, deleteBookmark);
+bookmark.route("/bookmark").post(isLoggedIn, createBookmark);
+bookmark.route("/bookmark/:id").delete(isLoggedIn, deleteBookmark);
 
 export default bookmark;
