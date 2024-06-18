@@ -7,36 +7,36 @@ const prisma = new PrismaClient();
 
 export const getAllProgram = async (req: Request, res: Response) => {
 	const { category, q } = req.query;
-	
+
 	// Construct the search criteria
 	const searchCriteria: any = {};
-	
+
 	if (q) {
 		searchCriteria.OR = [
 			{
 				title: {
 					contains: q.toString(),
-					mode: 'insensitive'
-				}
+					mode: "insensitive",
+				},
 			},
 			{
 				description: {
 					contains: q.toString(),
-					mode: 'insensitive'
-				}
-			}
+					mode: "insensitive",
+				},
+			},
 		];
 	}
 
 	if (category) {
 		searchCriteria.category = {
 			contains: category.toString(),
-			mode: 'insensitive'
+			mode: "insensitive",
 		};
 	}
 
 	const programs: Program[] = await prisma.program.findMany({
-		where: searchCriteria
+		where: searchCriteria,
 	});
 	res.status(200).json(programs);
 };

@@ -8,10 +8,13 @@ const ProgramSchema = z
 		closeDate: z.date(),
 		category: z.string(),
 		criteria: z.string(),
-		description: z.string(),
 		image: z.string(),
 		link: z.string(),
+		profil: z.string().optional(),
+		about: z.string().optional(),
 		uploader: z.string(),
+		benefits: z.string().optional(),
+		eligibility: z.string().optional(),
 	})
 	.omit({ id: true });
 

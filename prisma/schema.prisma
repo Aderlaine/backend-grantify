@@ -30,11 +30,14 @@ model Program {
   openDate    DateTime
   closeDate   DateTime
   category    String
-  description String
   criteria    String
   image       String
   link        String
   uploader    String
+  profil      String
+  benefits    String
+  eligibility String
+  about       String
   bookmarks   Bookmark[]
 }
 
