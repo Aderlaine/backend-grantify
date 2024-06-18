@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import CustomError from "../handler/CustomError";
 import { PrismaClient } from "@prisma/client";
+import { google } from "googleapis";
+import fs from "fs";
+import multer from "multer";
+import path from "path";
 import bcrypt from "bcrypt";
 import { EditUserSchema, User, UserSchema } from "../types/userSchema";
 import { validateForm } from "../utils/validateForm";
@@ -9,8 +13,18 @@ import { getUserIdFromToken } from "../utils/getUserIdByToken";
 const prisma = new PrismaClient();
 
 interface AuthRequest extends Request {
-	user?: any; // Sesuaikan dengan tipe data user Anda
+	user?: any;
 }
+
+const auth = new google.auth.GoogleAuth({
+	keyFile: "credentials.json",
+	scopes: ["https://www.googleapis.com/auth/drive.file"],
+});
+
+const drive = google.drive({ version: "v3", auth });
+
+const upload = multer({ dest: "uploads/" });
+
 export const getProfile = async (req: AuthRequest, res: Response) => {
 	const userId = req.user?.id;
 	if (!userId) {
@@ -104,3 +118,81 @@ export const editUser = async (req: Request, res: Response) => {
 
 	res.status(200).json(updatedUser);
 };
+
+export const uploadFile = async (req: Request, res: Response) => {
+	const userId = getUserIdFromToken(req);
+	const filePath = req.file?.path;
+
+	if (!filePath) {
+		return res.status(400).json({ message: "No file was uploaded." });
+	}
+
+	try {
+		const user = await prisma.user.findUnique({
+			where: { id: userId },
+		});
+
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		// Hapus foto lama jika ada
+		if (user.image) {
+			const fileIdMatch = user.image.match(/\/d\/(.*?)\//);
+			if (fileIdMatch) {
+				const fileId = fileIdMatch[1];
+				await drive.files.delete({
+					fileId: fileId,
+				});
+			}
+		}
+
+		const fileMetadata = {
+			name: `${userId}_${req.file?.originalname}`,
+		};
+
+		const media = {
+			mimeType: req.file?.mimetype,
+			body: fs.createReadStream(filePath),
+		};
+
+		const fileResponse = await drive.files.create({
+			requestBody: fileMetadata,
+			media: media,
+			fields: "id, webViewLink",
+		});
+
+		const fileId = fileResponse.data.id;
+		const fileUrl = fileResponse.data.webViewLink;
+
+		if (!fileId) {
+			throw new Error("File ID is missing from the response");
+		}
+
+		await drive.permissions.create({
+			fileId: fileId,
+			requestBody: {
+				role: "reader",
+				type: "anyone",
+			},
+		});
+
+		await prisma.user.update({
+			where: { id: userId },
+			data: { image: fileUrl },
+		});
+
+		fs.unlinkSync(filePath);
+
+		res.status(200).json({
+			message: "File uploaded and shared successfully!",
+			link: fileUrl,
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).send(error);
+	}
+};
+
+// Tambahkan middleware multer untuk menangani unggahan file
+export const uploadMiddleware = upload.single("file");
