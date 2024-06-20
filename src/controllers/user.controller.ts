@@ -159,11 +159,11 @@ export const uploadFile = async (req: Request, res: Response) => {
 		const fileResponse = await drive.files.create({
 			requestBody: fileMetadata,
 			media: media,
-			fields: "id, webViewLink",
+			fields: "id",
 		});
 
 		const fileId = fileResponse.data.id;
-		const fileUrl = fileResponse.data.webViewLink;
+		const fileUrl = `https://drive.google.com/uc?id=${fileId}`;
 
 		if (!fileId) {
 			throw new Error("File ID is missing from the response");

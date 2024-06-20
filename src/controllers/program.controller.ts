@@ -20,7 +20,7 @@ export const getAllProgram = async (req: Request, res: Response) => {
 				},
 			},
 			{
-				description: {
+				about: {
 					contains: q.toString(),
 					mode: "insensitive",
 				},
