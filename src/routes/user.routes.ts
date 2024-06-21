@@ -1,11 +1,10 @@
 import express, { Router } from "express";
 import {
-	editUser,
-	getAllUser,
-	getProfile,
-	register,
-	uploadFile,
-	uploadMiddleware,
+  editUser,
+  getAllUser,
+  getProfile,
+  register,
+  uploadFile,
 } from "../controllers";
 import catchAsync from "../utils/catchAsync";
 import isLoggedIn from "../middleware/isLoggedIn";
@@ -20,8 +19,6 @@ userRoutes.route("/register").post(catchAsync(register));
 
 userRoutes.route("/user/edit").put(catchAsync(editUser));
 
-userRoutes
-	.route("/upload")
-	.post(isLoggedIn, uploadMiddleware, catchAsync(uploadFile));
+userRoutes.route("/upload").post(isLoggedIn, catchAsync(uploadFile));
 
 export default userRoutes;
